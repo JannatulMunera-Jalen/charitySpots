@@ -9,32 +9,52 @@ import AppScreen from '../components/AppScreen';
 import AppText from '../components/AppText';
 import AppTextInput from '../components/AppTextInput';
 import AppButton from '../components/AppButton';
-
-const schema = Yup.object().shape(
+import AuthUser from '../config/AuthUser';
+// Validation schema using Yup
+const loginSchema = Yup.object().shape(
     {
         email: Yup.string().required().email().label("*Email"),
         password: Yup.string().required().min(6).max(10).label("*Password"),
     }
 );
 
-function LoginScreen(props) {
+const LoginScreen = ({ startApp }) => {
+    // Login handler function
+    const handleLogin = async (values, { setErrors }) => {
+        try {
+            const loggedIn = await AuthUser.login(values.email, values.password);
+            console.log(`Logged in: ${loggedIn}`);
+            
+            if (loggedIn) {
+              startApp();
+            } else {
+              setErrors({ submit: 'Invalid email or password' });
+            }
+          } catch (error) {
+            console.error(error);
+            setErrors({ submit: 'Login failed' });
+          }
+    };
 
     return (
         <AppScreen style={styles.container}>
             <View style={styles.welcomeContainer}>
+                {/* Welcome section */}
                     <MaterialCommunityIcons
                         name="charity"
                         size={80}
                         color={AppColors.color1}/>
                 </View>
+                {/* Formik form for handling login */}
                 <Formik
                     initialValues={{email:'', password:'',}}
-                    onSubmit = {values=> console.log(values)}
-                    validationSchema={schema}
+                    onSubmit = {handleLogin}
+                    validationSchema={loginSchema}
                 >
-                    {({handleChange, handleSubmit, errors, setFieldTouched, touched})=>(
+                    {({values, handleChange, handleSubmit, errors, handleBlur, touched})=>(
                         <>
-                        <View style={styles.textInputContainer}>
+                    <View style={styles.textInputContainer}>
+                        {/* Email input */}
                     <AppTextInput
                     autoCapitalize="none"
                     autoCorrect={false}
@@ -42,10 +62,12 @@ function LoginScreen(props) {
                     placeholder="Email Address"
                     keyboardType="email-address"
                     textContentType="emailAddress"
-                    onBlur = {() => setFieldTouched ("email")}
+                    value={values.email}
+                    onBlur = {handleBlur('email')}
                     onChangeText = {handleChange("email")}
                     />
-                    {touched.email && <AppText style={{color:'red', fontSize: 15, marginStart: 10}}>{errors.email}</AppText>}
+                    {errors.email && touched.email && (<AppText style={styles.errorText}>{errors.email}</AppText>)}
+                     {/* Password input */}
                     <AppTextInput
                     autoCapitalize="none"
                     autoCorrect={false}
@@ -53,30 +75,31 @@ function LoginScreen(props) {
                     placeholder="Password"
                     secureTextEntry
                     textContentType="password"
-                    onBlur = {() => setFieldTouched ("password")}
+                    value={values.password}
+                    onBlur = {handleBlur("password")}
                     onChangeText ={handleChange("password")}
                     />
-                    {touched.password && <AppText style={{color:'red', fontSize: 15, marginStart: 10}}>{errors.password}</AppText>}
+                    {errors.password && touched.password && (<AppText style={styles.errorText}>{errors.password}</AppText>)}
                     </View>
+                     {/* Login button */}
                     <AppButton 
                     title="Login" 
                     color='color2'
                     onPress={handleSubmit}
-                />   
+                    />
+                    {errors.submit && <AppText style={styles.errorText}>{errors.submit}</AppText>}   
                         </>
                     )}
                 </Formik>    
         </AppScreen>
-            
-        
     );
 }
 
 const styles = StyleSheet.create({
     container:{
-        flex:1,
         backgroundColor: AppColors.primaryColor,
         padding: 25,
+        marginTop:0,
     },
     welcomeContainer:{
         backgroundColor: AppColors.secondaryColor,
@@ -87,6 +110,12 @@ const styles = StyleSheet.create({
     textInputContainer:{
         marginVertical: 50,     
     },
+    errorText:{
+        color:'red', 
+        fontSize: 15, 
+        marginStart: 10,
+    },
+
     
 })
 
