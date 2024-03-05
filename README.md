@@ -26,4 +26,3 @@
  ### IMPORTANT
   I will NOT be includind the node_modules folder in my submission as the file is too big to submit and I am taking this decision in reference to a forum posted regarding said situation : https://ilearn.mq.edu.au/mod/forum/discuss.php?d=2228138
 
-  I have also been GRANTED an extension by the university for my submission [REF:2457346] Special Consideration for COMP3130 (written_assignment) 
