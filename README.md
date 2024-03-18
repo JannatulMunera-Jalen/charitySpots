@@ -21,8 +21,3 @@
  The App consists of two test files and is tested using Jest. Tt can be run usng 'npm test'. 
  The test involves GroupDataManager and AuthUser.
  In case the test does not run via 'npm test', please make sure you are in the correct directory 'CharitySpots'
-
-
- ### IMPORTANT
-  I will NOT be includind the node_modules folder in my submission as the file is too big to submit and I am taking this decision in reference to a forum posted regarding said situation : https://ilearn.mq.edu.au/mod/forum/discuss.php?d=2228138
-
